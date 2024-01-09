@@ -1,0 +1,24 @@
+[project]
+name = "snap4frame"
+version = "0.1.0"
+description = "Creates a snapshot of the python program for later analysis"
+authors = [
+    { name = "Panaintescu Adrian Valentin", email = "adrian.cert@gmail.com" },
+]
+dependencies = [
+    "importlib-metadata>=7.0.1",
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = { text = "GPL-3.0-or-later" }
+
+[project.optional-dependencies]
+"dev" = [
+    "black>=23.12.1",
+]
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.ruff]
+extend-select = ["C", "N", "SIM", "PTH", "I", "PL", "FURB"]
