@@ -5,11 +5,10 @@ repos:
         name: Aggregate TODOs
         entry: >
           bash -c "
-          echo -e '## Backlog from source\n' > todo.md
-          && grep -rain 'TODO' --exclude-dir=.* --exclude=.* --exclude=*.md
-          | sort -t: -k1,1 -k2n
+          grep -rain 'TODO' --exclude-dir=.* --exclude=.* --exclude=*.md
           | sed -n 's/^\([^:]*\):\([^:]*\).*[tT][oO][dD][oO]\W*\(.*\)/- [ ] [\1#\2](\1#L\2): \3/p'
-          >> todo.md
+          > todo.md
+          && echo -e \"## Backlog from source\n\n\$(cat todo.md)\" > todo.md
           "
         language: system
         files: '\.py$'

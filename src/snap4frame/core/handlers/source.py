@@ -11,6 +11,7 @@ class SourceLookupHandler:
     Attributes:
         lines_view (Optional[LineNumber]): The number of lines to include before and after the specified line.
     """
+
     class Default:
         lines_view: LineNumber = LineNumber(5)
 
