@@ -9,7 +9,13 @@ class BuiltinsFilter:
         variables (set): A set of built-in variable names.
     """
 
-    variables = {"__builtins__", *__builtins__}
+    variables = {
+        "__builtins__",
+        *__builtins__,
+        "__file__",
+        "__cached__",
+        "__annotations__",
+    }
 
     @classmethod
     def filter_dict(cls, data: Dict[str, Any]) -> Dict[str, Any]:

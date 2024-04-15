@@ -1,36 +1,58 @@
-import json
-import sys
-from dataclasses import asdict
-from typing import Any, Union
+import typing
 
 from snap4frame.core import log
+from snap4frame.core.metaclass import Singleton
+from snap4frame.processor.base import BaseEventProcessor, EventProcessorDirective
 from snap4frame.types import SnapFrameReport
 
 
-class EventHandler:
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
-        pass
+class EventHandler(metaclass=Singleton):
+    """Handles events and processes them using event processors."""
 
-    def process_snap_frame_report(self, event: SnapFrameReport, *args: Any, **kwds: Any) -> bool:
-        pass
-        x = event.as_dict()
-        json.dump(x, sys.stdout, indent=2)
-        return True
+    def lookup_processors(self, kind: str) -> typing.List[BaseEventProcessor]:
+        """Lookup event processors based on the given kind.
 
-    def report(self, event : Union[SnapFrameReport, Any], *args: Any, **kwds: Any) -> None:
+        Args:
+            kind (str): The kind of event.
 
-        if isinstance(event, SnapFrameReport):
-            handled = self.process_snap_frame_report(event, *args, **kwds)
-            if handled:
-                return
+        Returns:
+            List[BaseEventProcessor]: A list of event processors.
+        """
 
-        # SourceLookupHandler().process(event)
+        # TODO: Implement a proper way to lookup event processors based on configuration.
+        from snap4frame.processor import kit
 
-        log.warning(f"Unhandled event: {event} ({args=}, {kwds=})")
-        return
+        return [
+            kit.FileSaveProcessor(filepath="snap4frame.json"),
+        ]
 
-        # todo: this is a temporary solution
-        # todo: implement a proper event handler
-        # todo: call chain of handlers
-        
-        pass
+    def emit(
+        self,
+        event: typing.Union[SnapFrameReport, typing.Any],
+        kind: typing.Optional[str] = None,
+        *args,
+        **kwds,
+    ) -> None:
+        """Emits an event and processes it using event processors.
+
+        Args:
+            event (Union[SnapFrameReport, Any]): The event to emit.
+            kind (Optional[str]): The kind of event. Defaults to None.
+            *args: Additional positional arguments.
+            **kwds: Additional keyword arguments.
+        """
+        if not isinstance(event, SnapFrameReport):
+            log.warning(f"Unhandled event: {event} ({args=}, {kwds=})")
+            return
+
+        event_kind = kind or "default"
+        current_event = event
+        event_processors = self.lookup_processors(event_kind)
+        for filter in event_processors:
+            result = filter(current_event, *args, **kwds)
+
+            if isinstance(result, EventProcessorDirective):
+                if result == EventProcessorDirective.STOP:
+                    return
+                continue
+            current_event = result

@@ -9,12 +9,17 @@ logger = logging.getLogger(LOGGER_NAME)
 def config_logger(logger: logging.Logger):
     logger.handlers.clear()
 
-    logger.handlers.append(
-        TimedRotatingFileHandler(
-            filename="snap4frame.log",
-            when="D",
-        )
+    formatter = logging.Formatter(
+        "[%(asctime)s] %(name)s - %(levelname)s - %(message)s"
     )
+
+    handler = TimedRotatingFileHandler(
+        filename="snap4frame.log",
+        when="D",
+    )
+    handler.setFormatter(formatter)
+
+    logger.handlers.append(handler)
 
 
 config_logger(logger)

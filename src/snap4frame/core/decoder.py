@@ -2,19 +2,19 @@ from abc import ABC, abstractmethod
 from fnmatch import fnmatch
 from pathlib import Path
 from types import TracebackType
-from typing import Any, Iterator, Optional
+from typing import Any, Dict, Iterator, Optional, Union
 
-import snap4frame.config as cfg
-import snap4frame.types as t
+from snap4frame import config, types
 from snap4frame.core.filters import BuiltinsFilter
 
 
 class TracebackDecoder(ABC):
-    config: t.Parameters
+    config: types.Parameters
 
-    def __init__(self, config: Optional[t.Parameters] = None):
-        if config is not None:
-            self.config = t.Parameters(config)
+    def __init__(
+        self, config: Optional[Union[types.Parameters, Dict[str, Any]]] = None
+    ):
+        self.config = types.Parameters(config or {})
 
     @abstractmethod
     def decode(self, data: Any) -> Any:
@@ -22,7 +22,7 @@ class TracebackDecoder(ABC):
 
 
 class TracebackFrameDecoder(TracebackDecoder):
-    config: t.Parameters = t.Parameters(cfg.FRAME_DECODER)
+    config: types.Parameters = types.Parameters(config.FRAME_DECODER)
 
     def decode(self, data: TracebackType):
         frame_name = data.tb_frame.f_code.co_qualname
@@ -31,22 +31,21 @@ class TracebackFrameDecoder(TracebackDecoder):
         frame_locals = data.tb_frame.f_locals
         frame_locals = BuiltinsFilter.filter_dict(data=frame_locals)
         frame_locals = {
-            k: t.VariableCell.from_value(v) for k, v in frame_locals.items()
+            k: types.VariableCell.from_value(v) for k, v in frame_locals.items()
         }
 
-        lineno = t.LineNumber(data.tb_lineno)  # Convert int to LineNumber object
+        lineno = types.LineNumber(data.tb_lineno)  # Convert int to LineNumber object
 
-        return t.CallFrame(
+        return types.CallFrame(
             file=frame_file, name=frame_name, lineno=lineno, vars=frame_locals
         )
 
 
 class TracebackTypeDecoder(TracebackDecoder):
-    config: t.Parameters = t.Parameters(cfg.TRACEBACK_TYPE_DECODER)
+    config: types.Parameters
     frame_decoder = TracebackFrameDecoder()
 
-    @classmethod
-    def decode(cls, data: Optional[TracebackType]):
+    def decode(self, data: Optional[TracebackType]):
         raw_stack = []
         while data is not None:
             raw_stack.append(data)
@@ -56,12 +55,12 @@ class TracebackTypeDecoder(TracebackDecoder):
         for tb_obj in iter_stack:
             frame_name = tb_obj.tb_frame.f_code.co_qualname
 
-            if cls.config.exclude_frames and any(
-                fnmatch(frame_name, pth) for pth in cls.config.exclude_frames
+            if self.config.exclude_frames and any(
+                fnmatch(frame_name, pth) for pth in self.config.exclude_frames
             ):
                 continue
 
-            yield cls.frame_decoder.decode(tb_obj)
+            yield self.frame_decoder.decode(tb_obj)
             if frame_name == "<module>":
-                # Todo: check if this is the correct condition to break the loop
+                # TODO check if this is the correct condition to break the loop
                 break

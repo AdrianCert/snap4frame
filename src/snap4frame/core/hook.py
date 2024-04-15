@@ -24,9 +24,6 @@ class Snap4FrameExceptionHook:
         """
         Installs the exception hook.
 
-        Args:
-            **kwargs: Additional keyword arguments.
-
         Returns:
             None
         """

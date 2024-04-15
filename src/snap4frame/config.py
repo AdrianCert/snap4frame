@@ -1,8 +1,14 @@
-FRAME_DECODER = {
-    "cwd_replace": "${CWD}",
-}
+from snap4frame.types import Parameters
 
-TRACEBACK_TYPE_DECODER = {
-    "exclude_frames": [],
-    "include_frames": [],
-}
+FRAME_DECODER = Parameters(
+    {
+        "cwd_replace": "${CWD}",
+    }
+)
+
+TRACEBACK_TYPE_DECODER = Parameters(
+    {
+        "exclude_frames": [],
+        "include_frames": [],
+    }
+)

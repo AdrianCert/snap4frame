@@ -22,13 +22,12 @@ def path2str(
     return replace + result[cwd_len:]
 
 
-class LineNumber(int):
-    pass
+LineNumber = int
 
 
 class Parameters(UserDict):
-    def __getattr__(self, name):
-        return self.get(name)
+    def __getattr__(self, name) -> Any:
+        return self.get(name, None)
 
 
 @dataclass
@@ -55,6 +54,7 @@ class CallFrame(TypedBase):
         lineno (LineNumber): The line number in the source file where the call frame is located.
         vars (Dict[str, VariableCell]): A dictionary of variable cells associated with the call frame.
     """
+
     class SerializeMeta:
         @staticmethod
         def filter(key: str):
@@ -68,6 +68,7 @@ class CallFrame(TypedBase):
     name: str
     lineno: LineNumber
     vars: Dict[str, VariableCell] = field(default_factory=dict)
+    extra: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -105,6 +106,7 @@ class ContextDetails(TypedBase):
     additional: AdditionalContextDetails
     machine: MachineDetails
     packages: Dict[str, str]
+    extra: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
