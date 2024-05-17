@@ -1,18 +1,4 @@
 repos:
-  - repo: local
-    hooks:
-      - id: todo
-        name: Aggregate TODOs
-        entry: >
-          bash -c "
-          grep -rain 'TODO' --exclude-dir=.* --exclude=.* --exclude=*.md
-          | sed -n 's/^\([^:]*\):\([^:]*\).*[tT][oO][dD][oO]\W*\(.*\)/- [ ] [\1#\2](\1#L\2): \3/p'
-          > todo.md
-          && echo -e \"## Backlog from source\n\n\$(cat todo.md)\" > todo.md
-          "
-        language: system
-        files: '\.py$'
-        always_run: true
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.3.7
     hooks:

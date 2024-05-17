@@ -1,6 +1,9 @@
 from typing import TYPE_CHECKING
 
+from snap4frame.main import emit, setup_handler
 from snap4frame.processor.base import BaseEventProcessor, EventProcessorDirective
+
+__all__ = ["emit", "setup_handler", "init"]
 
 if TYPE_CHECKING:
     from snap4frame.const import ClientConstructor

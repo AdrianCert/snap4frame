@@ -24,7 +24,7 @@ class ExceptionHandler(metaclass=Singleton):
         self,
         exception: Exception,
         kind: typing.Optional[str] = None,
-    ) -> None:
+    ) -> typing.Any:
         """
         Handles an exception and emits a report.
 
@@ -43,9 +43,9 @@ class ExceptionHandler(metaclass=Singleton):
             value=str(exception),
         )
 
-        self.event_handler.emit(report, kind=kind)
+        return self.event_handler.emit(report, kind=kind)
 
-    def exception_hook(self, type, value, traceback) -> None:
+    def exception_hook(self, type, value, traceback):
         """
         Handles an exception and emits a report.
 
@@ -54,9 +54,9 @@ class ExceptionHandler(metaclass=Singleton):
             value (Exception): The exception object.
             traceback (traceback): The traceback object.
         """
-        self.handle_exception(value)
+        return self.handle_exception(value)
 
-    def exception(self, exception: Exception, kind=None) -> None:
+    def exception(self, exception: Exception, kind=None):
         """
         Handles an exception and emits a report.
 
@@ -64,4 +64,4 @@ class ExceptionHandler(metaclass=Singleton):
             exception (Exception): The exception object.
             kind (str, optional): The kind of exception. Defaults to None.
         """
-        self.handle_exception(exception, kind=kind)
+        return self.handle_exception(exception, kind=kind)

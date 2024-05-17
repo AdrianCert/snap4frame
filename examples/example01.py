@@ -28,6 +28,7 @@ def f():
     try:
         f2()
     except Exception as exp:
+        snap4frame.emit(exp)
         raise exp
 
 

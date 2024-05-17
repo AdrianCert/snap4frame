@@ -2,6 +2,9 @@ from typing import Any, Dict, List, Optional, TextIO
 
 from snap4frame.processor.base import BaseEventProcessor
 
+# TODO: Add versioning to the package
+#  this value should be single source of truth for the package version
+#  __version__ = "0.0.1"
 VERSION = "0.0.1"
 
 
