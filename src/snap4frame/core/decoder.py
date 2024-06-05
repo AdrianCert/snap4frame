@@ -25,7 +25,7 @@ class TracebackFrameDecoder(TracebackDecoder):
     config: types.Parameters = types.Parameters(config.FRAME_DECODER)
 
     def decode(self, data: TracebackType):
-        frame_name = data.tb_frame.f_code.co_qualname
+        frame_name = data.tb_frame.f_code.co_name
         frame_file = Path(data.tb_frame.f_code.co_filename)
 
         frame_locals = data.tb_frame.f_locals
@@ -53,7 +53,7 @@ class TracebackTypeDecoder(TracebackDecoder):
 
         iter_stack: Iterator[TracebackType] = reversed(raw_stack)
         for tb_obj in iter_stack:
-            frame_name = tb_obj.tb_frame.f_code.co_qualname
+            frame_name = tb_obj.tb_frame.f_code.co_name
 
             if self.config.exclude_frames and any(
                 fnmatch(frame_name, pth) for pth in self.config.exclude_frames

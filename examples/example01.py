@@ -1,7 +1,18 @@
 import random
 
 import snap4frame
+import snap4frame.processor
+import snap4frame.processor.kit
 
+snap4frame.setup_handler(
+    "default",
+    [
+        snap4frame.processor.kit.FileSaveProcessor(
+            create_path=True,
+            exists_ok=True,
+        ),
+    ],
+)
 snap4frame.init()
 
 

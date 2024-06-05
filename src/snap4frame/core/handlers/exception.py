@@ -35,15 +35,18 @@ class ExceptionHandler(metaclass=Singleton):
         Returns:
             None
         """
-        traceback = exception.__traceback__
-        stacktrace = list(self.traceback_decoder.decode(traceback))
-        report = SnapFrameReport(
-            stacktrace=stacktrace,
-            context=self.context_reporter(),
-            value=str(exception),
-        )
+        try:
+            traceback = exception.__traceback__
+            stacktrace = list(self.traceback_decoder.decode(traceback))
+            report = SnapFrameReport(
+                stacktrace=stacktrace,
+                context=self.context_reporter(),
+                value=str(exception),
+            )
 
-        return self.event_handler.emit(report, kind=kind)
+            return self.event_handler.emit(report, kind=kind)
+        except Exception:
+            pass
 
     def exception_hook(self, type, value, traceback):
         """

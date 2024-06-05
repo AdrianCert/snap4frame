@@ -1,6 +1,6 @@
 [project]
 name = "snap4frame"
-version = "0.1.0"
+version = "0.1.1"
 description = "Creates a snapshot of the python program for later analysis"
 authors = [
     { name = "Panaintescu Adrian Valentin", email = "adrian.cert@gmail.com" },
@@ -9,8 +9,8 @@ dependencies = [
     "importlib-metadata>=7.0.1",
 ]
 requires-python = ">=3.8"
-readme = "README.md"
-license = { text = "GPL-3.0-or-later" }
+readme = "readme.md"
+license = { file = "license.md" }
 
 [project.optional-dependencies]
 "dev" = [
@@ -24,9 +24,10 @@ msgspec = [
 requests = [
     "requests>=2.31.0",
 ]
+
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.ruff.lint]
 extend-select = ["C", "N", "SIM", "PTH", "I", "PL", "FURB"]

@@ -1,4 +1,5 @@
 # **snap4frame**
+
 ### creates a snapshot of the python program for later analysis
 
 **snap4frame** is a python package that creates a snapshot of your python program for later analysis. It's designed to help developers understand the state of their program at a specific point in time, which can be useful for debugging and performance optimization.
@@ -50,4 +51,4 @@ We welcome contributions to snap4frame! Please see our [contributing guide](CONT
 
 ## License
 
-Snap4frame is licensed under the [MIT License](LICENSE).
+Snap4frame is licensed under the [MIT License](license.md).
