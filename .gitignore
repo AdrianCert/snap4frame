@@ -111,6 +111,15 @@ ipython_config.py
 .pdm-python
 .pdm-build/
 
+# pip-compile
+#   pip-compile creates requirements.txt files for your dependencies based on your setup.py.
+#   These are not part of your source code.
+requirements.txt
+requirements*.txt
+requirements/
+
+*.lock
+
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
 

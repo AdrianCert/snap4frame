@@ -1,6 +1,6 @@
 [project]
 name = "snap4frame"
-version = "0.1.1"
+version = "0.1.2"
 description = "Creates a snapshot of the python program for later analysis"
 authors = [
     { name = "Panaintescu Adrian Valentin", email = "adrian.cert@gmail.com" },

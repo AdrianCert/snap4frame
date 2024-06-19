@@ -22,7 +22,7 @@ def config_logger(logger: logging.Logger):
     logger.handlers.append(handler)
 
 
-config_logger(logger)
+# config_logger(logger)
 logger.setLevel(logging.DEBUG)
 
 # expose logging functions
