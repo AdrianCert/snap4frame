@@ -9,10 +9,10 @@ from snap4frame.core.types import TypedBase
 
 def path2str(
     data: Path,
-    cwd: Optional[str] = Path.cwd().as_posix().lower(),
+    cwd: Optional[str] = None,
     replace: Optional[str] = "./",
 ) -> str:
-    cwd = Path.cwd().as_posix().lower()
+    cwd = cwd or Path.cwd().as_posix().lower()
     cwd_len = len(cwd)
     result: str = data.resolve().as_posix()
     if replace is None:

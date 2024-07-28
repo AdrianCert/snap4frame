@@ -8,6 +8,7 @@ snap4frame.setup_handler(
     "default",
     [
         snap4frame.processor.kit.FileSaveProcessor(
+            filepath="snap4frame.json",
             create_path=True,
             exists_ok=True,
         ),
