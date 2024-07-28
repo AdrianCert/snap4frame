@@ -1,16 +1,18 @@
+import typing
 from collections import UserDict
 from dataclasses import dataclass, field
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from types import TracebackType
 
 from snap4frame.core.types import TypedBase
 
 
 def path2str(
     data: Path,
-    cwd: Optional[str] = None,
-    replace: Optional[str] = "./",
+    cwd: typing.Optional[str] = None,
+    replace: typing.Optional[str] = "./",
 ) -> str:
     cwd = cwd or Path.cwd().as_posix().lower()
     cwd_len = len(cwd)
@@ -26,7 +28,7 @@ LineNumber = int
 
 
 class Parameters(UserDict):
-    def __getattr__(self, name) -> Any:
+    def __getattr__(self, name) -> typing.Any:
         return self.get(name, None)
 
 
@@ -36,7 +38,7 @@ class VariableCell(TypedBase):
     type: str
 
     @staticmethod
-    def from_value(value: Any):
+    def from_value(value: typing.Any):
         return VariableCell(repr(value), type(value).__name__)
 
     def as_dict(self):
@@ -67,8 +69,8 @@ class CallFrame(TypedBase):
     file: Path
     name: str
     lineno: LineNumber
-    vars: Dict[str, VariableCell] = field(default_factory=dict)
-    extra: Dict[str, Any] = field(default_factory=dict)
+    vars: typing.Dict[str, VariableCell] = field(default_factory=dict)
+    extra: typing.Dict[str, typing.Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -97,7 +99,7 @@ class MachineDetails(TypedBase):
 
 @dataclass
 class AdditionalContextDetails(TypedBase):
-    argv: List[str]
+    argv: typing.List[str]
 
 
 @dataclass
@@ -105,13 +107,13 @@ class ContextDetails(TypedBase):
     interpreter: InterpreterDetails
     additional: AdditionalContextDetails
     machine: MachineDetails
-    packages: Dict[str, str]
-    extra: Dict[str, Any] = field(default_factory=dict)
+    packages: typing.Dict[str, str]
+    extra: typing.Dict[str, typing.Any] = field(default_factory=dict)
 
 
 @dataclass
 class SnapFrameReport(TypedBase):
-    stacktrace: List[CallFrame]
+    stacktrace: typing.List[CallFrame]
     value: str
     context: ContextDetails
     dt: datetime = field(default_factory=datetime.utcnow)
@@ -124,3 +126,27 @@ class SnapFrameReport(TypedBase):
         @staticmethod
         def datetime(data: "SnapFrameReport", *args):
             return data.dt.isoformat()
+
+
+class EventProcessorDirective(Enum):
+    CONTINUE = 0
+    STOP = 1
+
+
+ProcessorMetaField = typing.Union[int, float, str, bool]
+SnapFrameEvent = typing.Union[
+    SnapFrameReport,
+    typing.Dict[str, typing.Dict[typing.Any, typing.Any]],
+    typing.Any,
+]
+SnapFrameResult = typing.Union[
+    EventProcessorDirective,
+    SnapFrameReport,
+    typing.Dict[str, typing.Dict[typing.Any, typing.Any]],
+    typing.Any,
+]
+
+ExceptionHookCallback = typing.Callable[
+    [typing.Type[BaseException], BaseException, typing.Optional[TracebackType]],
+    typing.Any,
+]

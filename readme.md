@@ -5,7 +5,9 @@
 
 [![pypi](https://img.shields.io/pypi/v/snap4frame.svg)](https://pypi.org/project/snap4frame/)
 [![python](https://img.shields.io/pypi/pyversions/snap4frame.svg)](https://pypi.org/project/snap4frame/)
-[![Linter](https://img.shields.io/badge/checks-ruff-black)](https://github.com/adriancert/snap4fame)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![pypi-downloads](https://img.shields.io/pypi/dm/snap4frame.svg?label=PyPI%20downloads)](https://pypi.org/project/snap4frame/)
 
 [![License](https://img.shields.io/github/license/adriancert/snap4frame?color=red)](#)

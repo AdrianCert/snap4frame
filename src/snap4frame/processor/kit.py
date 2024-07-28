@@ -1,14 +1,10 @@
 import functools
 import sys
+import typing
 from logging import Logger
 from pathlib import Path
-from typing import Optional
 
-from snap4frame.processor.base import (
-    BaseEventProcessor,
-    EventProcessorDirective,
-    ProcessorMetaField,
-)
+from snap4frame.processor import base as processor_base
 from snap4frame.types import Parameters, SnapFrameReport
 
 try:
@@ -20,7 +16,7 @@ except ImportError:
     import json
 
 
-def json_encode(data, indent: Optional[int] = None) -> str:
+def json_encode(data, indent: typing.Optional[int] = None) -> str:
     if USE_MSGSPEC:
         if indent:
             return msgspec.json.format(
@@ -31,22 +27,35 @@ def json_encode(data, indent: Optional[int] = None) -> str:
     return json.dumps(data, indent=indent)
 
 
-class ConvertToDictProcessor(BaseEventProcessor):
-    short_name: ProcessorMetaField = "converter"
+class ConvertToDictProcessor(processor_base.BaseEventProcessor):
+    short_name: processor_base.ProcessorMetaField = "converter"
 
-    def process_event(self, event: SnapFrameReport) -> dict:
+    def event2dict(
+        self, event: processor_base.SnapFrameReport
+    ) -> typing.Dict[str, typing.Any]:
+        return event.as_dict()
+
+    def process_event(
+        self,
+        event: processor_base.SnapFrameEvent,
+        **kwargs,
+    ) -> processor_base.SnapFrameEvent:
         if not isinstance(event, SnapFrameReport):
             self.logger.warning(
                 "ConvertToDictFilter received unexpected event: %s", event
             )
             raise ValueError("Unexpected event type")
-        return event.as_dict()
+        return self.event2dict(event=event)
 
 
 class StreamProcessor(ConvertToDictProcessor):
-    short_name: ProcessorMetaField = "stream"
+    short_name: processor_base.ProcessorMetaField = "stream"
 
-    def process_event(self, event: SnapFrameReport) -> EventProcessorDirective:
+    def process_event(
+        self,
+        event: processor_base.SnapFrameEvent,
+        **kwargs,
+    ) -> processor_base.EventProcessorDirective:
         _result = super().process_event(event)
         print(
             json_encode(
@@ -55,15 +64,19 @@ class StreamProcessor(ConvertToDictProcessor):
             ),
             file=self.config.fd or sys.stdout,
         )
-        return EventProcessorDirective.CONTINUE
+        return processor_base.EventProcessorDirective.CONTINUE
 
 
 class FileSaveProcessor(StreamProcessor):
     config: Parameters
     logger: Logger
-    short_name: ProcessorMetaField = "file"
+    short_name: processor_base.ProcessorMetaField = "file"
 
-    def process_event(self, event: SnapFrameReport) -> EventProcessorDirective:
+    def process_event(
+        self,
+        event: processor_base.SnapFrameEvent,
+        **kwargs,
+    ) -> processor_base.EventProcessorDirective:
         filepath = Path(self.config.filepath)
 
         if not self.config.exists_ok and filepath.exists():
@@ -76,12 +89,12 @@ class FileSaveProcessor(StreamProcessor):
             self.config["fd"] = fd
             super().process_event(event)
 
-        return EventProcessorDirective.CONTINUE
+        return processor_base.EventProcessorDirective.CONTINUE
 
 
 class WebHookProcessor(ConvertToDictProcessor):
     config: Parameters
-    short_name: ProcessorMetaField = "webhook"
+    short_name: processor_base.ProcessorMetaField = "webhook"
 
     def setup(self):
         request_method = self.config.get("method", "POST")
@@ -91,7 +104,7 @@ class WebHookProcessor(ConvertToDictProcessor):
         try:
             # requests is an optional dependency
             # so we import it here to avoid ImportError
-            import requests
+            import requests  # type: ignore[import-untyped]
 
             self.request_method = functools.partial(
                 requests.request,
@@ -105,6 +118,15 @@ class WebHookProcessor(ConvertToDictProcessor):
         result = self.request_method(json=data)
         self.logger.info("WebHookFilter response: %s", result.status_code)
 
-    def process_event(self, event: SnapFrameReport) -> EventProcessorDirective:
-        self.make_request(super().process_event(event))
-        return EventProcessorDirective.CONTINUE
+    def process_event(
+        self,
+        event: processor_base.SnapFrameEvent,
+        **kwargs,
+    ) -> processor_base.EventProcessorDirective:
+        report = (
+            self.event2dict(event=event)
+            if isinstance(event, processor_base.SnapFrameReport)
+            else event
+        )
+        self.make_request(report)
+        return processor_base.EventProcessorDirective.CONTINUE

@@ -30,7 +30,7 @@ class SourceLookupHandler:
         Returns:
             Dict[Path, List[LineNumber]]: A dictionary where the keys are file paths and the values are lists of line numbers.
         """
-        result = {}
+        result: Dict[Path, List[LineNumber]] = {}
         for file, line in data:
             if file not in result:
                 result[file] = []

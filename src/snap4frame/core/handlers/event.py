@@ -5,7 +5,17 @@ from snap4frame.core.metaclass import Singleton
 from snap4frame.core.store import Store
 from snap4frame.processor import kit
 from snap4frame.processor.base import BaseEventProcessor, EventProcessorDirective
-from snap4frame.types import SnapFrameReport
+from snap4frame.types import SnapFrameEvent, SnapFrameReport
+
+
+class EventHandlersDefaultKinds:
+    @classmethod
+    def default(cls):
+        yield kit.FileSaveProcessor(
+            filepath="snap4frame.json",
+            create_path=True,
+            exists_ok=True,
+        )
 
 
 class EventHandler(metaclass=Singleton):
@@ -13,11 +23,9 @@ class EventHandler(metaclass=Singleton):
 
     handlers_dict: typing.Dict[str, typing.List[BaseEventProcessor]] = Store().handlers
 
-    # TODO: add others processors to the default list
-    #  labels: enhancement
-    default_processors: typing.List[BaseEventProcessor] = [
-        kit.FileSaveProcessor(filepath="snap4frame.json"),
-    ]
+    def apply_not_found_kind_polices(self, kind):
+        log.warning("The event kind: %s do not exists. Using 'default' kind", kind)
+        return "default"
 
     def lookup_processors(self, kind: str) -> typing.List[BaseEventProcessor]:
         """Lookup event processors based on the given kind.
@@ -29,11 +37,22 @@ class EventHandler(metaclass=Singleton):
             List[BaseEventProcessor]: A list of event processors.
         """
 
-        return self.handlers_dict.get(kind, self.default_processors)
+        if kind in self.handlers_dict:
+            return self.handlers_dict[kind]
+
+        kind = (
+            kind
+            if hasattr(EventHandlersDefaultKinds, kind)
+            else self.apply_not_found_kind_polices(kind)
+        )
+        self.handlers_dict[kind] = handlers = list(
+            getattr(EventHandlersDefaultKinds, kind)()
+        )
+        return handlers
 
     def emit(
         self,
-        event: typing.Union[SnapFrameReport, typing.Any],
+        event: SnapFrameEvent,
         kind: typing.Optional[str] = None,
         *args,
         **kwds,
@@ -51,7 +70,7 @@ class EventHandler(metaclass=Singleton):
             return
 
         event_kind = kind or "default"
-        current_event = event
+        current_event: SnapFrameEvent = event
         event_processors = self.lookup_processors(event_kind)
 
         if callable(event_processors):

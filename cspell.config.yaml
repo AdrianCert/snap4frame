@@ -3,6 +3,10 @@ ignorePaths: []
 dictionaryDefinitions: []
 dictionaries: []
 words:
+  - excepthook
+  - levelname
   - msgspec
+  - pypi
+  - mypy
 ignoreWords: []
 import: []

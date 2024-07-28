@@ -1,8 +1,8 @@
 import sys
-from types import TracebackType
-from typing import Callable, Optional, Type
+import typing
 
 from snap4frame.core.handlers.exception import ExceptionHandler
+from snap4frame.types import ExceptionHookCallback
 
 
 class Snap4FrameExceptionHook:
@@ -16,7 +16,7 @@ class Snap4FrameExceptionHook:
         handler (ExceptionHandler): An instance of the ExceptionHandler class used for exception handling.
     """
 
-    previous_hook: Optional[Callable[[Type, Exception, TracebackType], None]] = None
+    previous_hook: typing.Optional[ExceptionHookCallback] = None
     handler: ExceptionHandler = ExceptionHandler()
 
     @classmethod

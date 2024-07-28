@@ -51,7 +51,10 @@ class TypedBase:
         used_keys = set()
 
         result = {
-            k: used_keys.add(k)
+            # Using a little have to perform 2 actions in one
+            # set.add return None so is a falsy value and
+            # always second expression will be evaluated
+            k: used_keys.add(k)  # type: ignore[func-returns-value]
             or (getattr(cast_handler, k)(self, v) if hasattr(cast_handler, k) else v)
             for k, v in kv_pairs
             if not filter_handler or filter_handler(k)

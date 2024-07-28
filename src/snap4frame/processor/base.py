@@ -1,17 +1,26 @@
-from enum import Enum
+import typing
 from logging import Logger
-from typing import Any, Optional, TypeVar, Union
 
 from snap4frame.core.log import logger as lib_logger
 from snap4frame.core.metaclass import Singleton
-from snap4frame.types import Parameters, SnapFrameReport
+from snap4frame.types import (
+    EventProcessorDirective,
+    Parameters,
+    ProcessorMetaField,
+    SnapFrameEvent,
+    SnapFrameReport,
+    SnapFrameResult,
+)
 
-ProcessorMetaField = Union[int, float, str, bool, TypeVar("ProcessorMetaField")]
-
-
-class EventProcessorDirective(Enum):
-    CONTINUE = 0
-    STOP = 1
+__all__ = [
+    "Parameters",
+    "SnapFrameReport",
+    "SnapFrameEvent",
+    "ProcessorMetaField",
+    "SnapFrameResult",
+    "EventProcessorDirective",
+    "BaseEventProcessor",
+]
 
 
 class EventProcessorFactory(metaclass=Singleton):
@@ -34,7 +43,7 @@ class EventProcessorRegistry(type):
             if item_value == ProcessorMetaField:
                 continue
             factory.register(name, item_value, cls)
-            lib_logger.info("Registered %s as %s with %s", cls, name, item_value)
+            lib_logger.debug("Registered %s as %s with %s", cls, name, item_value)
         super().__init__(name, bases, attrs)
 
 
@@ -42,7 +51,7 @@ class BaseEventProcessor(metaclass=EventProcessorRegistry):
     config: Parameters
     logger: Logger
 
-    def __init__(self, logger: Optional[Logger] = None, **kwargs):
+    def __init__(self, logger: typing.Optional[Logger] = None, **kwargs):
         self.config = Parameters(kwargs)
         self.logger = logger or lib_logger
 
@@ -50,12 +59,8 @@ class BaseEventProcessor(metaclass=EventProcessorRegistry):
         if callable(setup_method):
             setup_method()
 
-    def process_event(
-        self, event: Union[SnapFrameReport, Any], *args, **kwargs
-    ) -> Union[EventProcessorDirective, SnapFrameReport, Any]:
+    def process_event(self, event: SnapFrameEvent, **kwargs) -> SnapFrameResult:
         raise NotImplementedError
 
-    def __call__(
-        self, *args, **kwargs
-    ) -> Union[EventProcessorDirective, SnapFrameReport, Any]:
+    def __call__(self, *args, **kwargs) -> SnapFrameResult:
         return self.process_event(*args, **kwargs)

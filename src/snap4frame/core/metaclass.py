@@ -1,3 +1,6 @@
+import typing
+
+
 class Singleton(type):
     """
     Metaclass that allows only one instance of a class to be created.
@@ -10,7 +13,7 @@ class Singleton(type):
     Subsequent calls to create an instance of MyClass will return the same instance.
     """
 
-    _instances = {}
+    _instances: typing.Dict[typing.Any, typing.Any] = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
