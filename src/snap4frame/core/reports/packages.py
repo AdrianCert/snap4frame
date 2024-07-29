@@ -8,9 +8,6 @@ class PackagesReporter:
     A class that generates a report of installed package distributions.
     """
 
-    def __init__(self) -> None:
-        pass
-
     def __call__(self, *args: Any, **kwds: Any) -> Dict[str, str]:
         """
         Generates a report of installed package distributions.

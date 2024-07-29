@@ -12,16 +12,7 @@ class InterpreterReporter:
     This class provides a callable object that returns an instance of the
     `InterpreterDetails` class, which contains information about the Python
     interpreter being used.
-
-    Attributes:
-        None
-
-    Methods:
-        __call__: Returns an instance of `InterpreterDetails` with interpreter details.
     """
-
-    def __init__(self) -> None:
-        pass
 
     def __call__(self, *args: Any, **kwds: Any) -> InterpreterDetails:
         """

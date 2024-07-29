@@ -27,14 +27,20 @@ class EventHandler(metaclass=Singleton):
         log.warning("The event kind: %s do not exists. Using 'default' kind", kind)
         return "default"
 
-    def lookup_processors(self, kind: str) -> typing.List[BaseEventProcessor]:
+    def lookup_processors(
+        self,
+        kind: str,
+    ) -> typing.Union[
+        typing.List[BaseEventProcessor],
+        typing.Callable[[], typing.Iterable[BaseEventProcessor]],
+    ]:
         """Lookup event processors based on the given kind.
 
         Args:
             kind (str): The kind of event.
 
         Returns:
-            List[BaseEventProcessor]: A list of event processors.
+            Iterable[BaseEventProcessor]: A list of event processors.
         """
 
         if kind in self.handlers_dict:
@@ -74,7 +80,7 @@ class EventHandler(metaclass=Singleton):
         event_processors = self.lookup_processors(event_kind)
 
         if callable(event_processors):
-            event_processors = event_processors()
+            event_processors = list(event_processors())
 
         for filter in event_processors:
             result = filter(current_event, *args, **kwds)
