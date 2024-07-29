@@ -10,6 +10,12 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![pypi-downloads](https://img.shields.io/pypi/dm/snap4frame.svg?label=PyPI%20downloads)](https://pypi.org/project/snap4frame/)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AdrianCert_snap4frame&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=AdrianCert_snap4frame)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=AdrianCert_snap4frame&metric=bugs)](https://sonarcloud.io/summary/new_code?id=AdrianCert_snap4frame)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=AdrianCert_snap4frame&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=AdrianCert_snap4frame)
+<!-- [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=AdrianCert_snap4frame&metric=coverage)](https://sonarcloud.io/summary/new_code?id=AdrianCert_snap4frame) -->
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=AdrianCert_snap4frame&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=AdrianCert_snap4frame)
+
 [![License](https://img.shields.io/github/license/adriancert/snap4frame?color=red)](#)
 [![GitHub Repo stars](https://img.shields.io/github/stars/adriancert/snap4frame?style=social)](#)
 
