@@ -34,7 +34,7 @@ class EventProcessorFactory(metaclass=Singleton):
 
 
 class EventProcessorRegistry(type):
-    def __init__(cls, name, bases, attrs):
+    def __init__(cls, cls_name, bases, attrs):
         factory = EventProcessorFactory()
         for name, value in cls.__annotations__.items():
             if value != ProcessorMetaField:
@@ -44,7 +44,7 @@ class EventProcessorRegistry(type):
                 continue
             factory.register(name, item_value, cls)
             lib_logger.debug("Registered %s as %s with %s", cls, name, item_value)
-        super().__init__(name, bases, attrs)
+        super().__init__(cls_name, bases, attrs)
 
 
 class BaseEventProcessor(metaclass=EventProcessorRegistry):
