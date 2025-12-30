@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "snap4frame"
 version = "0.1.2"
@@ -13,11 +17,6 @@ readme = "readme.md"
 license = { file = "license.md" }
 
 [project.optional-dependencies]
-"dev" = [
-    "tox>=4.14.2",
-    "ruff>=0.3.7",
-    "pre-commit>=3.5.0",
-]
 msgspec = [
     "msgspec>=0.18.6",
 ]
@@ -25,9 +24,14 @@ requests = [
     "requests>=2.31.0",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[dependency-groups]
+dev = [
+    # { include-group = "ci" },
+    # more groups here
+    "tox>=4.14.2",
+    "ruff>=0.3.7",
+    "pre-commit>=3.5.0",
+]
 
 [tool.ruff.lint]
 extend-select = ["C", "N", "SIM", "PTH", "I", "PL", "FURB"]

@@ -1,12 +1,15 @@
 version: "0.2"
 ignorePaths: []
 dictionaryDefinitions: []
-dictionaries: []
+dictionaries:
+  - en
+  - technical
+  - python
 words:
   - excepthook
   - levelname
-  - msgspec
-  - pypi
-  - mypy
+  - FURB
 ignoreWords: []
 import: []
+ignoreRegExpList:
+ - /[A-Z][a-z]{3,}/gm
